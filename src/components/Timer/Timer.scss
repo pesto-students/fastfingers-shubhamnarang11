@@ -1,0 +1,18 @@
+#timer {
+  stroke-dasharray: 1000px;
+  stroke-dashoffset: 375px;
+  stroke-linecap: round;
+  stroke-width: 10px;
+  stroke: red;
+  fill: none;
+//   animation: countdown 10s linear infinite forwards;
+}
+
+@keyframes countdown {
+  from {
+    stroke-dashoffset: 375px;
+  }
+  to {
+    stroke-dashoffset: 1000px;
+  }
+}
