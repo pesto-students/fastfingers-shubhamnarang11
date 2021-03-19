@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React  from 'react';
 import { convertSecondsToTimerFormat } from '../../utils/commonFunctions';
 import './Timer.scss';
 
@@ -31,13 +31,11 @@ export default class Timer extends React.Component {
     this.setState({ currentTime: this.getTimerValue() });
   }
   componentDidUpdate(prevProps) {
-    let { currentTime } = this.state;
     if (this.props.isWordCompleted) {
       this.props.updateScore(this.state.currentTime);
     }
 
     if (prevProps.word !== this.props.word) {
-      currentTime = this.getTimerValue();
       this.timerRef.current.style.animation = `countdown ${this.getTimerValue()}s linear forwards`;
       this.setState({ currentTime: this.getTimerValue() });
     }

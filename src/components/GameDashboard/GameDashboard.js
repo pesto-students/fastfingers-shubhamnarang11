@@ -16,7 +16,7 @@ const initialState = {
   scores: [],
 };
 
-export default function GameDashboard({ submitCurrentScore }) {
+export default function GameDashboard() {
   const [{ userName, difficultyLevel }, dispatch] = useReducer(
     gameReducer,
     initialState
