@@ -44,7 +44,16 @@ export default function GameDashboard() {
 
   useEffect(() => {
     if (difficultyLevel) {
-      generateWord();
+      const generateNewWord = () => {
+        const newWord = getNewWord(data, usedWords, difficultyLevel);
+        setCurrentWordAlphabets([...newWord]);
+        setUsedWords([...usedWords, newWord]);
+        setDifficultyFactor(
+          DATA_STORE.DIFFICULTY_LEVEL_FACTOR_MAPPING[difficultyLevel] +
+            usedWords.length * 0.01
+        );
+      };
+      generateNewWord();
     }
   }, [difficultyLevel]);
 
