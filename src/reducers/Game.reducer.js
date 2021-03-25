@@ -8,7 +8,11 @@ export default function gameReducer(state, action) {
         userName: action.payload.userName,
         difficultyLevel: action.payload.difficultyLevel,
       };
-
+    case GAME_ACTIONS.UPDATE_DIFFICULTY_LEVEL:
+      return {
+        ...state,
+        difficultyLevel: action.payload.difficultyLevel,
+      };
     default:
       return state;
   }

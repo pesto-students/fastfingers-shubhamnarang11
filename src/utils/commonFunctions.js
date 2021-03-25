@@ -1,6 +1,12 @@
-function convertSecondsToTimerFormat(seconds) {
-  return [seconds / 60, seconds % 60]
+function convertSecondsToTimerFormat(time) {
+  return [time / 6000, time / 100, time % 100]
     .map((val) => `0${Math.floor(val)}`.slice(-2))
+    .filter((val, i) => {
+      if (i === 0 && val === '00') {
+        return false;
+      }
+      return true;
+    })
     .join(':');
 }
 

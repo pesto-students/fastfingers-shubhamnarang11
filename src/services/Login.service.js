@@ -12,4 +12,14 @@ function getUserData() {
   return Promise.resolve({ userName, difficultyLevel });
 }
 
-export const LoginService = { saveUserDataAndStartGame, getUserData };
+function updateDifficultyLevel(difficultyLevel) {
+  sessionStorage.removeItem('selectedDifficultyLevel');
+  sessionStorage.setItem('selectedDifficultyLevel', difficultyLevel);
+
+  return Promise.resolve();
+}
+export const LoginService = {
+  saveUserDataAndStartGame,
+  getUserData,
+  updateDifficultyLevel,
+};
