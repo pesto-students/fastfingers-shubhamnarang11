@@ -4,6 +4,7 @@ import { LoginService } from '../services/Login.service';
 export const GAME_ACTIONS = {
   SET_USER_DETAILS: 'SET_USER_DETAILS',
   GAME_ERROR: 'GAME_ERROR',
+  UPDATE_DIFFICULTY_LEVEL: 'UPDATE_DIFFICULTY_LEVEL',
 };
 
 function getUserDetails(dispatch) {
@@ -30,4 +31,16 @@ function getGameScores() {
   return GameService.getGameScores();
 }
 
-export { getUserDetails, saveGameScores, getGameScores };
+function updateDifficultyLevel(dispatch, difficultyLevel) {
+  LoginService.updateDifficultyLevel(difficultyLevel)
+    .then(() => {
+      dispatch({
+        type: GAME_ACTIONS.UPDATE_DIFFICULTY_LEVEL,
+        payload: { difficultyLevel },
+      });
+    })
+    .catch((err) => {
+      dispatch({ type: GAME_ACTIONS.GAME_ERROR, payload: err });
+    });
+}
+export { getUserDetails, saveGameScores, getGameScores, updateDifficultyLevel };

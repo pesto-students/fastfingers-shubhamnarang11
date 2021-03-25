@@ -34,19 +34,19 @@ export default class Timer extends React.Component {
       }\
       `;
 
-      this.timerRef.current.style.animation = `${this.props.word} ${timerValue}s linear forwards`;
+      this.timerRef.current.style.animation = `${this.props.word} ${timerValue / 100}s linear forwards`;
       document.styleSheets[0].insertRule(keyFrames);
       this.setState({ currentTime: timerValue }, () => {
         this.intervalTimer = setInterval(() => {
           if (this.state.currentTime === 0) {
             clearInterval(this.intervalTimer);
-            this.props.stopGame();
+            this.props.stopGame(timerValue);
           } else {
             this.setState({
               currentTime: this.state.currentTime - 1,
             });
           }
-        }, 1000);
+        }, 10);
       });
     }
   }
@@ -56,7 +56,9 @@ export default class Timer extends React.Component {
   }
 
   getTimerValue = () => {
-    return Math.round(this.props.word.length / this.props.difficultyFactor);
+    return Math.round(
+      (this.props.word.length * 100) / this.props.difficultyFactor
+    );
   };
 
   render() {
@@ -68,7 +70,7 @@ export default class Timer extends React.Component {
           cy='110'
           r='100'
           stroke='#00435d'
-          strokeWidth='10'
+          strokeWidth='15'
           fill='none'
         />
         <circle
@@ -77,11 +79,17 @@ export default class Timer extends React.Component {
           cx='110'
           cy='110'
           r='100'
-          // stroke='red'
-          strokeWidth='10'
+          strokeWidth='15'
           fill='none'
         />
-        <text x='110' y='110' textAnchor='middle' stroke='#ffffff' style={{fontSize: '30px'}} fill="#ffffff">
+        <text
+          x='110'
+          y='110'
+          textAnchor='middle'
+          stroke='#ffffff'
+          style={{ fontSize: '30px' }}
+          fill='#ffffff'
+        >
           {convertSecondsToTimerFormat(currentTime)}
         </text>
       </svg>

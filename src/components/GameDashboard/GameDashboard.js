@@ -1,5 +1,9 @@
 import React, { useEffect, useReducer, useState } from 'react';
-import { getUserDetails } from '../../actions/Game.action';
+import {
+  getUserDetails,
+  updateDifficultyLevel,
+  getGameScores,
+} from '../../actions/Game.action';
 import gameReducer from '../../reducers/Game.reducer';
 import {
   convertSecondsToTimerFormat,
@@ -16,8 +20,6 @@ import Close from '../../assets/Close.svg';
 const initialState = {
   userName: '',
   difficultyLevel: '',
-  currentScore: 0,
-  scores: [],
 };
 
 export default function GameDashboard({ submitScore }) {
@@ -32,9 +34,13 @@ export default function GameDashboard({ submitScore }) {
   const [userInput, setUserInput] = useState([]);
   const [difficultyFactor, setDifficultyFactor] = useState(1);
   const [isWordCompleted, setIsWordCompleted] = useState(false);
+  const [scores, setScores] = useState([]);
 
   useEffect(() => {
     getUserDetails(dispatch);
+    getGameScores().then((scores) => {
+      setScores(scores);
+    });
     inputRef.current.focus();
     // eslint-disable-next-line
   }, []);
@@ -43,9 +49,20 @@ export default function GameDashboard({ submitScore }) {
     const newWord = getNewWord(data, usedWords, difficultyLevel);
     setCurrentWordAlphabets([...newWord]);
     setUsedWords([...usedWords, newWord]);
+    if (
+      difficultyFactor >
+        DATA_STORE.DIFFICULTY_LEVEL_FACTOR_MAPPING[difficultyLevel] + 0.5 &&
+      difficultyLevel !== 'hard'
+    ) {
+      setUsedWords([]);
+      updateDifficultyLevel(
+        dispatch,
+        difficultyLevel === 'easy' ? 'medium' : 'hard'
+      );
+    }
     setDifficultyFactor(
       DATA_STORE.DIFFICULTY_LEVEL_FACTOR_MAPPING[difficultyLevel] +
-        usedWords.length * 0.01
+        usedWords.length * 0.1
     );
   };
 
@@ -73,136 +90,92 @@ export default function GameDashboard({ submitScore }) {
     }
   };
 
-  const stopGame = () => {
-    submitScore(currentScore);
+  const stopGame = (score) => {
+    submitScore(currentScore + score);
   };
 
+  const getMaxScore = () => {
+    return Math.max(...scores);
+  };
   return (
-    <div style={{ color: '#fff' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', marginTop: '20px', marginLeft: '20px' }}>
-          <img
-            src={Player}
-            style={{ height: '30px', width: '30px', color: '#ff5155' }}
-            alt=''
-          ></img>
-          <p
-            style={{
-              marginLeft: '15px',
-              fontSize: '30px',
-              lineHeight: '1.2',
-              color: '#ff5155',
-              marginTop: 0,
-              marginBottom: '10px',
-            }}
-          >
-            {userName.toUpperCase()}
-          </p>
+    <div className='game-dashboard-container'>
+      <div className='headers'>
+        <div>
+          <img src={Player} alt=''></img>
+          <p>{userName.toUpperCase()}</p>
         </div>
 
-        <p
-          style={{
-            fontSize: '30px',
-            color: '#ff5155',
-            marginBottom: '0',
-            marginRight: '30px',
-          }}
-        >
-          fast fingers
-        </p>
+        <p id='app-header'>fast fingers</p>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', marginLeft: '20px' }}>
-          <img
-            src={Gamepad}
-            style={{ height: '30px', width: '30px', color: '#ff5155' }}
-            alt=''
-          ></img>
-          <p
-            style={{
-              marginLeft: '15px',
-              fontSize: '30px',
-              lineHeight: '1.2',
-              color: '#ff5155',
-              marginTop: 0,
-            }}
-          >
-            LEVEL : {difficultyLevel.toUpperCase()}
-          </p>
+      <div className='headers'>
+        <div style={{ marginTop: '0' }}>
+          <img src={Gamepad} alt=''></img>
+          <p>LEVEL : {difficultyLevel.toUpperCase()}</p>
         </div>
-        <p
-          style={{
-            marginRight: '30px',
-            fontSize: '30px',
-            lineHeight: '1.2',
-            color: '#ff5155',
-            marginTop: '10px',
-          }}
-        >
-          SCORE: {convertSecondsToTimerFormat(currentScore)}
-        </p>
+        <p id='app-score'>SCORE: {convertSecondsToTimerFormat(currentScore)}</p>
       </div>
-      <div style={{ marginLeft: '12%' }}>
-        <Timer
-          word={currentWordAlphabets.join('')}
-          difficultyFactor={difficultyFactor}
-          stopGame={stopGame}
-          isWordCompleted={isWordCompleted}
-          updateScore={(score) => {
-            setCurrentScore(currentScore + score);
-            setIsWordCompleted(false);
-            generateWord();
-            setUserInput([]);
-          }}
-        ></Timer>
+      <div className='main'>
+        <div className='score-list'>
+          <p className='header'>SCORE BOARD</p>
+          <ul>
+            {scores.map((score, i) => (
+              <li>
+                {score === getMaxScore()
+                  ? null
+                  : `Game ${i + 1} : ${convertSecondsToTimerFormat(score)}`}
+              </li>
+            ))}
+          </ul>
+          <p className='personal-best'>PERSONAL BEST</p>
+          <ul>
+            {scores.map((score, i) => (
+              <li>
+                {score !== getMaxScore()
+                  ? null
+                  : `Game ${i + 1} : ${convertSecondsToTimerFormat(score)}`}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className='timer-div'>
+          <div>
+            <Timer
+              word={currentWordAlphabets.join('')}
+              difficultyFactor={difficultyFactor}
+              stopGame={stopGame}
+              isWordCompleted={isWordCompleted}
+              updateScore={(score) => {
+                setCurrentScore(currentScore + score);
+                setIsWordCompleted(false);
+                generateWord();
+                setUserInput([]);
+              }}
+            ></Timer>
+          </div>
+          <div sclassName='word-div'>
+            {currentWordAlphabets.map((alphabet, i) => (
+              <p
+                key={i}
+                className={
+                  i < userInput.length
+                    ? isInputCorrect().includes(i)
+                      ? 'incorrect-alphabet word'
+                      : 'correct-alphabet word'
+                    : 'word'
+                }
+              >
+                {alphabet.toUpperCase()}
+              </p>
+            ))}
+          </div>
+          <input
+            ref={inputRef}
+            type='text'
+            value={userInput.join('').toUpperCase()}
+            onChange={handleUserInput}
+          ></input>
+        </div>
       </div>
-      <div>
-        {currentWordAlphabets.map((alphabet, i) => (
-          <p
-            key={i}
-            style={
-              i < userInput.length
-                ? isInputCorrect().includes(i)
-                  ? {
-                      display: 'inline',
-                      color: '#445298',
-                      fontSize: '60px',
-                      fontWeight: '500',
-                      textShadow: '0 0 16px rgba(0, 0, 0, 0.16)',
-                    }
-                  : {
-                      display: 'inline',
-                      color: '#54ba18',
-                      fontSize: '60px',
-                      fontWeight: '500',
-                      textShadow: '0 0 16px rgba(0, 0, 0, 0.16)',
-                    }
-                : {
-                    display: 'inline',
-                    fontSize: '60px',
-                    fontWeight: '500',
-                    textShadow: '0 0 16px rgba(0, 0, 0, 0.16)',
-                  }
-            }
-          >
-            {alphabet.toUpperCase()}
-          </p>
-        ))}
-      </div>
-      <input
-        ref={inputRef}
-        type='text'
-        value={userInput.join('').toUpperCase()}
-        onChange={handleUserInput}
-        style={{
-          padding: '20px 20px 20px 100px',
-          opacity: '0.59',
-          borderRadius: '15px',
-          boxShadow: '0 3px 16px 0 rgba(0, 0, 0, 0.8)',
-          fontSize: '26px',
-          color: '#032228',
-        }}
-      ></input>
       <div
         style={{
           display: 'flex',
@@ -210,7 +183,7 @@ export default function GameDashboard({ submitScore }) {
           marginTop: '50px',
           cursor: 'pointer',
         }}
-        onClick={stopGame}
+        onClick={() => stopGame(0)}
       >
         <img
           src={Close}
