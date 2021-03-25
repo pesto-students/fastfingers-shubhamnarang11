@@ -69,7 +69,7 @@ export default function GameDashboard({ submitScore }) {
     }
     setDifficultyFactor(
       DATA_STORE.DIFFICULTY_LEVEL_FACTOR_MAPPING[difficultyLevel] +
-        usedWords.length * 0.1
+        usedWords.length * 0.01
     );
   };
 
