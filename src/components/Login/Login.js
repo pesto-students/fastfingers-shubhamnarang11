@@ -1,8 +1,7 @@
-import React, { useState, useReducer } from 'react';
+import React, { useState } from 'react';
 import './Login.scss';
 import { DATA_STORE } from '../../utils/dataStore';
 import initGame from '../../actions/Login.action';
-import loginReducer from '../../reducers/Login.reducer';
 import Keyboard from '../../assets/Keyboard.png';
 import PlayIcon from '../../assets/StartGame.svg';
 
@@ -16,33 +15,60 @@ export default function LoginComponent() {
     },
   } = DATA_STORE;
 
-  const [, dispatch] = useReducer(loginReducer, {});
-
   const [userName, setUserName] = useState('');
   const [difficultyLevel, setDifficultyLevel] = useState('');
+  const [isUserName, setIsUserName] = useState(true);
 
   const handleInputChange = (value, callEvent) => {
     callEvent(value);
   };
 
   const startGame = () => {
-    initGame(dispatch, {
-      userName,
-      difficultyLevel: difficultyLevel || 'easy',
-    });
+    if (userName) {
+      initGame({
+        userName,
+        difficultyLevel: difficultyLevel || 'easy',
+      });
+    } else {
+      setIsUserName(false);
+    }
   };
 
   return (
     <div className='login-container'>
       <img src={Keyboard} alt='' className='keyboard-image' />
       <p className='app-header'>{APP_HEADER}</p>
-      <p className='app-subheader'>{APP_SUBHEADER}</p>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <div class='line'></div>
+        <p className='app-subheader'>{APP_SUBHEADER}</p>
+        <div class='line'></div>
+      </div>
       <input
         type='text'
         placeholder={NAME_INPUT_PLACEHOLDER}
-        value={userName}
-        onChange={(event) => handleInputChange(event.target.value, setUserName)}
+        value={userName.toUpperCase()}
+        onChange={(event) =>
+          handleInputChange(event.target.value.toLowerCase(), setUserName)
+        }
       />
+      {!isUserName ? (
+        <p
+          style={{
+            color: 'red',
+            textAlign: 'left',
+            margin: 0,
+            marginLeft: '35%',
+          }}
+        >
+          *Please enter your name!
+        </p>
+      ) : null}
       <div className='select'>
         <select
           id='standard-select'
@@ -61,7 +87,7 @@ export default function LoginComponent() {
           ))}
         </select>
       </div>
-      <div onClick={startGame} className="start-game-div">
+      <div onClick={startGame} className='start-game-div'>
         <img src={PlayIcon} alt=''></img>
         <p>START GAME</p>
       </div>

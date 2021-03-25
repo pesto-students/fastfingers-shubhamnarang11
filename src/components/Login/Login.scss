@@ -15,11 +15,20 @@
     margin-top: 13px;
     margin-bottom: 0;
   }
+  .line {
+    display: inline-block;
+    width: 70px;
+    height: 1px;
+    background-color: #ff5155;
+  }
+
   .app-subheader {
+    vertical-align: middle;
+    display: inline-block;
     font-size: 18px;
     font-weight: 500;
     color: #ff5155;
-    margin-top: 10px;
+    margin: 10px 20px;
   }
 
   input {
@@ -36,6 +45,7 @@
     color: #032228;
     padding: 18px 0px 18px 32px;
     outline: none;
+    margin-top: 10px;
   }
 
   select {
@@ -107,6 +117,7 @@
   .start-game-div {
     display: table;
     margin: 0 auto;
+    margin-top: 50px;
     cursor: pointer;
     img,
     p {

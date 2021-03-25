@@ -1,7 +1,8 @@
 export const DATA_STORE = {
   APP_NAVIGATION_ROUTES: {
     LOGIN: '/',
-    GAME: '/game'
+    GAME: '/game',
+    GAME_SCORE: '/game-score'
   },
   LOGIN_SCREEN: {
     APP_HEADER: 'fast fingers',

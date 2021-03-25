@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { convertSecondsToTimerFormat } from '../../utils/commonFunctions';
 import './Timer.scss';
 
@@ -14,32 +14,40 @@ export default class Timer extends React.Component {
 
     this.timerRef = React.createRef();
   }
-  componentDidMount() {
-    this.timerRef.current.style.animation = `countdown ${this.props.time}s linear forwards`;
 
-    this.intervalTimer = setInterval(() => {
-      if (this.state.currentTime === 0) {
-        clearInterval(this.intervalTimer);
-        this.props.stopGame();
-      } else {
-        this.setState({
-          currentTime: this.state.currentTime - 1,
-        });
-      }
-    }, 1000);
-
-    this.setState({ currentTime: this.getTimerValue() });
-  }
   componentDidUpdate(prevProps) {
-    let { currentTime } = this.state;
     if (this.props.isWordCompleted) {
       this.props.updateScore(this.state.currentTime);
+      clearInterval(this.intervalTimer);
     }
 
     if (prevProps.word !== this.props.word) {
-      currentTime = this.getTimerValue();
-      this.timerRef.current.style.animation = `countdown ${this.getTimerValue()}s linear forwards`;
-      this.setState({ currentTime: this.getTimerValue() });
+      const timerValue = this.getTimerValue();
+      var keyFrames = `
+      @keyframes ${this.props.word} {\
+        from {\
+          stroke-dashoffset: 375px;\
+        }\
+        to {\
+          stroke-dashoffset: 1000px;\
+        }\
+      }\
+      `;
+
+      this.timerRef.current.style.animation = `${this.props.word} ${timerValue}s linear forwards`;
+      document.styleSheets[0].insertRule(keyFrames);
+      this.setState({ currentTime: timerValue }, () => {
+        this.intervalTimer = setInterval(() => {
+          if (this.state.currentTime === 0) {
+            clearInterval(this.intervalTimer);
+            this.props.stopGame();
+          } else {
+            this.setState({
+              currentTime: this.state.currentTime - 1,
+            });
+          }
+        }, 1000);
+      });
     }
   }
 
@@ -54,12 +62,12 @@ export default class Timer extends React.Component {
   render() {
     const { currentTime } = this.state;
     return (
-      <svg height='350' width='350'>
+      <svg height='250' width='350'>
         <circle
           cx='110'
           cy='110'
           r='100'
-          stroke='white'
+          stroke='#00435d'
           strokeWidth='10'
           fill='none'
         />
@@ -73,7 +81,7 @@ export default class Timer extends React.Component {
           strokeWidth='10'
           fill='none'
         />
-        <text x='110' y='110' textAnchor='middle' stroke='red'>
+        <text x='110' y='110' textAnchor='middle' stroke='#ffffff' style={{fontSize: '30px'}} fill="#ffffff">
           {convertSecondsToTimerFormat(currentTime)}
         </text>
       </svg>
