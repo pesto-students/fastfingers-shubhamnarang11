@@ -91,7 +91,7 @@ export default function GameDashboard({ submitScore }) {
   };
 
   const stopGame = (score) => {
-    // submitScore(currentScore + score);
+    submitScore(currentScore + score);
   };
 
   const getMaxScore = () => {
