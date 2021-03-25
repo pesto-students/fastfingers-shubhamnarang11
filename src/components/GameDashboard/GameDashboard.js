@@ -35,13 +35,20 @@ export default function GameDashboard({ submitScore }) {
   const [difficultyFactor, setDifficultyFactor] = useState(1);
   const [isWordCompleted, setIsWordCompleted] = useState(false);
   const [scores, setScores] = useState([]);
+  const [loaderState, setLoaderState] = useState('Ready');
 
   useEffect(() => {
     getUserDetails(dispatch);
     getGameScores().then((scores) => {
       setScores(scores);
     });
-    inputRef.current.focus();
+    setTimeout(() => {
+      setLoaderState('Steady');
+    }, 1500);
+    setTimeout(() => setLoaderState('Go'), 3000);
+    setTimeout(() => {
+      setLoaderState('');
+    }, 4500);
     // eslint-disable-next-line
   }, []);
 
@@ -67,11 +74,13 @@ export default function GameDashboard({ submitScore }) {
   };
 
   useEffect(() => {
-    if (difficultyLevel) {
+    if (!loaderState) {
       generateWord();
+
+      inputRef.current.focus();
     }
     // eslint-disable-next-line
-  }, [difficultyLevel]);
+  }, [loaderState]);
 
   const isInputCorrect = () => {
     const wrongInputs = [];
@@ -126,55 +135,68 @@ export default function GameDashboard({ submitScore }) {
               </li>
             ))}
           </ul>
-          <p className='personal-best'>PERSONAL BEST</p>
-          <ul>
-            {scores.map((score, i) => (
-              <li>
-                {score !== getMaxScore()
-                  ? null
-                  : `Game ${i + 1} : ${convertSecondsToTimerFormat(score)}`}
-              </li>
-            ))}
-          </ul>
+          {scores.length > 0 ? (
+            <>
+              <p className='personal-best'>PERSONAL BEST</p>
+              <ul>
+                {scores.map((score, i) => (
+                  <li>
+                    {score !== getMaxScore()
+                      ? null
+                      : `Game ${i + 1} : ${convertSecondsToTimerFormat(score)}`}
+                  </li>
+                ))}
+              </ul>{' '}
+            </>
+          ) : null}
         </div>
-        <div className='timer-div'>
-          <div>
-            <Timer
-              word={currentWordAlphabets.join('')}
-              difficultyFactor={difficultyFactor}
-              stopGame={stopGame}
-              isWordCompleted={isWordCompleted}
-              updateScore={(score) => {
-                setCurrentScore(currentScore + score);
-                setIsWordCompleted(false);
-                generateWord();
-                setUserInput([]);
-              }}
-            ></Timer>
+        {loaderState ? (
+          <div
+            className='loader'
+            style={{ animation: `${loaderState} 1.5s linear` }}
+          >
+            {loaderState}!
           </div>
-          <div sclassName='word-div'>
-            {currentWordAlphabets.map((alphabet, i) => (
-              <p
-                key={i}
-                className={
-                  i < userInput.length
-                    ? isInputCorrect().includes(i)
-                      ? 'incorrect-alphabet word'
-                      : 'correct-alphabet word'
-                    : 'word'
-                }
-              >
-                {alphabet.toUpperCase()}
-              </p>
-            ))}
+        ) : (
+          <div className='timer-div'>
+            <div>
+              <Timer
+                word={currentWordAlphabets.join('')}
+                difficultyFactor={difficultyFactor}
+                stopGame={stopGame}
+                isWordCompleted={isWordCompleted}
+                updateScore={(score) => {
+                  setCurrentScore(currentScore + score);
+                  setIsWordCompleted(false);
+                  generateWord();
+                  setUserInput([]);
+                }}
+              ></Timer>
+            </div>
+            <div className='word-div'>
+              {currentWordAlphabets.map((alphabet, i) => (
+                <p
+                  key={i}
+                  className={
+                    i < userInput.length
+                      ? isInputCorrect().includes(i)
+                        ? 'incorrect-alphabet word'
+                        : 'correct-alphabet word'
+                      : 'word'
+                  }
+                >
+                  {alphabet.toUpperCase()}
+                </p>
+              ))}
+            </div>
+            <input
+              ref={inputRef}
+              type='text'
+              value={userInput.join('').toUpperCase()}
+              onChange={handleUserInput}
+            ></input>
           </div>
-          <input
-            ref={inputRef}
-            type='text'
-            value={userInput.join('').toUpperCase()}
-            onChange={handleUserInput}
-          ></input>
-        </div>
+        )}
       </div>
       <div
         style={{

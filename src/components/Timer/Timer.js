@@ -35,7 +35,7 @@ export default class Timer extends React.Component {
       `;
 
       this.timerRef.current.style.animation = `${this.props.word} ${timerValue / 100}s linear forwards`;
-      document.styleSheets[0].insertRule(keyFrames);
+      document.styleSheets[1].insertRule(keyFrames);
       this.setState({ currentTime: timerValue }, () => {
         this.intervalTimer = setInterval(() => {
           if (this.state.currentTime === 0) {

@@ -81,7 +81,15 @@ export default function LoginComponent() {
             {SELECT_PLACEHOLDER}
           </option>
           {LEVELS.map((level, i) => (
-            <option key={i} value={level.toLowerCase()}>
+            <option
+              key={i}
+              value={level.toLowerCase()}
+              style={{
+                backgroundColor: '#ffffff',
+                opacity: '0.59',
+                color: '#032228',
+              }}
+            >
               {level}
             </option>
           ))}
