@@ -1,0 +1,134 @@
+.login-container {
+  text-align: center;
+  padding-top: 80px;
+  align-items: center;
+  .keyboard-image {
+    width: 178px;
+    height: 100px;
+    opacity: 0.64;
+    color: #ff5155;
+  }
+  .app-header {
+    font-size: 50px;
+    line-height: 1.2;
+    color: #ff5155;
+    margin-top: 13px;
+    margin-bottom: 0;
+  }
+  .line {
+    display: inline-block;
+    width: 70px;
+    height: 1px;
+    background-color: #ff5155;
+  }
+
+  .app-subheader {
+    vertical-align: middle;
+    display: inline-block;
+    font-size: 18px;
+    font-weight: 500;
+    color: #ff5155;
+    margin: 10px 20px;
+  }
+
+  input {
+    width: 350px;
+    height: 30px;
+    opacity: 0.59;
+    border-radius: 15px;
+    box-shadow: 0 3px 16px 0 rgba(0, 0, 0, 0.8);
+    background-color: #ffffff;
+    font-size: 18px;
+    line-height: 1.2;
+    letter-spacing: normal;
+    text-align: left;
+    color: #032228;
+    padding: 18px 0px 18px 32px;
+    outline: none;
+    margin-top: 10px;
+  }
+
+  select {
+    margin: 0 auto;
+
+    margin-top: 20px;
+    appearance: none;
+    background-color: transparent;
+    border: none;
+    padding: 31px 180px 24px 29px;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    line-height: inherit;
+    border-radius: 15px;
+    box-shadow: 0 3px 16px 0 rgba(0, 0, 0, 0.8);
+    color: #97a5a7;
+    border: 1px solid #ffffff;
+    z-index: 1;
+    &::-ms-expand {
+      display: none;
+    }
+    outline: none;
+  }
+
+  .select {
+    display: grid;
+    grid-template-areas: 'select';
+    position: relative;
+    option {
+      background-color: #ffffff;
+      opacity: 0.59;
+      margin: 5px;
+    }
+    select,
+    &::after {
+      grid-area: select;
+      margin-right: 25%;
+      margin-right: 460px;
+    }
+
+    font-size: 1.25rem;
+    cursor: pointer;
+    line-height: 1.1;
+
+    &:not(.select--multiple)::after {
+      content: '';
+      justify-self: end;
+      width: 0.8em;
+      height: 0.5em;
+
+      margin-top: 50px;
+      margin-right: 470px;
+      background-color: #97a4a7;
+      clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+    }
+  }
+
+  select:focus + .focus {
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    border: 2px solid var(--select-focus);
+    border-radius: inherit;
+  }
+
+  .start-game-div {
+    display: table;
+    margin: 0 auto;
+    margin-top: 50px;
+    cursor: pointer;
+    img,
+    p {
+      display: table-cell;
+      vertical-align: middle;
+    }
+
+    p {
+      font-size: 24px;
+      font-weight: 500;
+      color: #ff5155;
+    }
+  }
+}
